@@ -17,10 +17,17 @@ const gameboard = (function() {
         console.log(boardCellValues);
     }
 
-    const placeToken = () => {}
+    const placeToken = (cell, player) => {
+        const isCellEmpty = cell.getValue();
+        if(isCellEmpty){
+            return
+        }else{
+            cell.addToken(player);
+        }
+    }
 
     return {
-        getBoard, printBoard, placeToken
+        getBoard, printBoard, placeToken,
     }
     
 })();
@@ -28,11 +35,13 @@ const gameboard = (function() {
 function createCell(){
     let value = 0;
 
-    // Closure
+    // Closures
     const getValue = () => value;
 
+    const addToken = player => value = player.getPlayerToken();
+
     return {
-        getValue,
+        getValue, addToken, 
     }
 }
 
