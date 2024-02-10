@@ -13,8 +13,15 @@ const gameboard = (function() {
 
     // Look into each row, look into each cell in that row, and get the value of that cell
     const printBoard = () => {
-        const boardCellValues = board.map((row) => row.map(cell => cell.getValue()));
+        const boardCellValues = board.map(row => row.map(cell => cell.getValue()));
         console.log(boardCellValues);
+    }
+
+    const isBoardFull = () => {
+        // const isBoardFull = board.every(row => row.every(cell => cell.getValue() !== 0));
+        // return isBoardFull;
+        const isBoardFull = !board.some(row => row.some(cell => cell.getValue() === 0));
+        return isBoardFull;
     }
 
     const placeToken = (cell, player) => {
@@ -27,7 +34,7 @@ const gameboard = (function() {
     }
 
     return {
-        getBoard, printBoard, placeToken,
+        getBoard, printBoard, isBoardFull, placeToken,
     }
     
 })();
