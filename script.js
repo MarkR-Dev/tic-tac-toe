@@ -40,7 +40,7 @@ const gameboard = (function() {
 function createCell(){
     let value = 0;
 
-    // Closures retain access to the value variable of each cell created
+    // Closures retain access to the value variable of each cell object created
     const getValue = () => value;
 
     const addToken = player => value = player.getPlayerToken();
@@ -60,6 +60,20 @@ function createPlayer(name, tokenSymbol){
 }
 
 const gameController = (function(){
+    // Row, column and diagonal winning combos
+    const winningCombos = [
+        [[0, 0], [0, 1], [0, 2]],
+        [[1, 0], [1, 1], [1, 2]],
+        [[2, 0], [2, 1], [2, 2]],
+
+        [[0, 0], [1, 0], [2, 0]],
+        [[0, 1], [1, 1], [2, 1]], 
+        [[0, 2], [1, 2], [2, 2]], 
+        
+        [[0, 0], [1, 1], [2, 2]], 
+        [[0, 2], [1, 1], [2, 0]], 
+    ];
+
     const player1 = createPlayer("Player 1", "X");
     const player2 = createPlayer("Player 2", "O");
     const playersArray = [player1, player2];
@@ -79,15 +93,30 @@ const gameController = (function(){
         console.log(`Setting token ${getActivePlayer().getPlayerToken()}`);
         gameboard.placeToken(cell, getActivePlayer());
 
-        // Insert win checking logic here
-
+        if(isWinner()){
+            gameboard.printBoard();
+            console.log(`Game over, ${getActivePlayer().getPlayerName()} Wins!`);
+            return
+        }else if(isTie()){
+            gameboard.printBoard();
+            console.log("TIE");
+            return
+        }
+        
         switchPlayerTurn();
         printNewRound();
     }
 
-    const isGameOver = () => {
-       // To do
+    // Look through the winning combos and see if any match the active players token
+    const isWinner = () => {
+        return winningCombos.some(combo => {
+            return combo.every(cellValue => {
+               return gameboard.getBoard()[cellValue[0]][cellValue[1]].getValue() === getActivePlayer().getPlayerToken(); 
+            })
+        });
     }
+
+    const isTie = () => gameboard.isBoardFull();
 
     printNewRound()
 
