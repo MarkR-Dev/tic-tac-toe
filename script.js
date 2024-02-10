@@ -18,8 +18,7 @@ const gameboard = (function() {
     }
 
     const isBoardFull = () => {
-        // const isBoardFull = board.every(row => row.every(cell => cell.getValue() !== 0));
-        // return isBoardFull;
+        // Check if the board is full by searching for an empty cell
         const isBoardFull = !board.some(row => row.some(cell => cell.getValue() === 0));
         return isBoardFull;
     }
@@ -36,13 +35,12 @@ const gameboard = (function() {
     return {
         getBoard, printBoard, isBoardFull, placeToken,
     }
-    
 })();
 
 function createCell(){
     let value = 0;
 
-    // Closures
+    // Closures retain access to the value variable of each cell created
     const getValue = () => value;
 
     const addToken = player => value = player.getPlayerToken();
@@ -60,4 +58,42 @@ function createPlayer(name, tokenSymbol){
         getPlayerName, getPlayerToken,
     }
 }
+
+const gameController = (function(){
+    const player1 = createPlayer("Player 1", "X");
+    const player2 = createPlayer("Player 2", "O");
+    const playersArray = [player1, player2];
+    
+    let activePlayer = playersArray[0];
+
+    const getActivePlayer = () => activePlayer;
+
+    const switchPlayerTurn = () => activePlayer = activePlayer === playersArray[0] ? playersArray[1] : playersArray[0];
+        
+    const printNewRound = () => {
+        gameboard.printBoard();
+        console.log(`${getActivePlayer().getPlayerName()}'s Turn!`);
+    }
+
+    const playRound = (cell) => {
+        console.log(`Setting token ${getActivePlayer().getPlayerToken()}`);
+        gameboard.placeToken(cell, getActivePlayer());
+
+        // Insert win checking logic here
+
+        switchPlayerTurn();
+        printNewRound();
+    }
+
+    const isGameOver = () => {
+       // To do
+    }
+
+    printNewRound()
+
+    return {
+        getActivePlayer, playRound,
+    }
+})();
+
 
