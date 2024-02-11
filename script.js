@@ -1,11 +1,12 @@
 const gameboard = (function() {
     const board = [];
 
-    // Loops to populate 2D array of cells representing rows/cols
+    // Loops to populate 2D array of cells representing rows/cols,
+    // each cell has a property holding its row/col position
     for(let i = 0; i < 3; i++){
         board[i] = [];
         for(let j = 0; j < 3; j++){
-            board[i].push(createCell());
+            board[i].push(createCell(i, j));
         }
     }
 
@@ -23,30 +24,29 @@ const gameboard = (function() {
         return isBoardFull;
     }
 
-    const placeToken = (cell, player) => {
-        const isCellEmpty = cell.getValue();
-        if(isCellEmpty){
-            return
-        }else{
-            cell.addToken(player);
-        }
-    }
-
+    const isCellTaken = cell => cell.getValue() !== 0;
+    
+    const placeToken = (cell, player) => cell.addToken(player);
+    
     return {
-        getBoard, printBoard, isBoardFull, placeToken,
+        getBoard, printBoard, isBoardFull, isCellTaken, placeToken,
     }
 })();
 
-function createCell(){
+function createCell(row, col){
     let value = 0;
 
     // Closures retain access to the value variable of each cell object created
     const getValue = () => value;
 
+    const getPosition = () => {
+        return {row, col};
+    }
+
     const addToken = player => value = player.getPlayerToken();
 
     return {
-        getValue, addToken, 
+        getValue, addToken, getPosition,
     }
 }
 
@@ -90,6 +90,10 @@ const gameController = (function(){
     }
 
     const playRound = (cell) => {
+        if(gameboard.isCellTaken(cell)){
+           return 
+        }
+
         console.log(`Setting token ${getActivePlayer().getPlayerToken()}`);
         gameboard.placeToken(cell, getActivePlayer());
 
@@ -122,6 +126,36 @@ const gameController = (function(){
 
     return {
         getActivePlayer, playRound,
+    }
+})();
+
+const screenController = (function () {
+    const boardDiv = document.querySelector(".board");
+
+    const updateScreen = () => {
+        boardDiv.textContent = "";
+
+        const board = gameboard.getBoard();
+        board.forEach(row => {
+            row.forEach(cell => {
+                // Destructuring the returned obj to use for setting data-attributes
+                const {row, col} = cell.getPosition();
+                const cellButton = document.createElement("button");
+
+                cellButton.classList.add("cell");
+                cellButton.setAttribute("data-row", row);
+                cellButton.setAttribute("data-col", col);
+                cellButton.textContent = cell.getValue();
+
+                boardDiv.appendChild(cellButton);
+            })
+        })
+    }
+
+    updateScreen();
+
+    return {
+        updateScreen,
     }
 })();
 

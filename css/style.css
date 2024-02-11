@@ -1,0 +1,32 @@
+body {
+    background-color: darkslateblue;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
+    width: 500px;
+    height: 500px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.cell {
+    background-color: transparent;
+    border: none;
+}
+
+[data-row="0"],
+[data-row="1"] {
+    border-bottom: 3px solid white;
+}
+
+[data-col="0"],
+[data-col="1"]{
+    border-right: 3px solid white;
+}
+
+
