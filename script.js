@@ -102,16 +102,21 @@ const gameController = (function(){
             gameboard.printBoard();
             console.log(`Game over, ${getActivePlayer().getPlayerName()} Wins!`);
             isGameOver = true;
+            screenController.updateScreen();
+            screenController.displayWinner(getActivePlayer())
             return
         }else if(isTie()){
             gameboard.printBoard();
             console.log("TIE");
             isGameOver = true;
+            screenController.updateScreen();
+            screenController.displayTie();
             return
         }
         
         switchPlayerTurn();
         printNewRound();
+        screenController.updateScreen();
     }
 
     // Look through the winning combos and see if any match the active players token
@@ -134,9 +139,11 @@ const gameController = (function(){
 
 const screenController = (function () {
     const boardDiv = document.querySelector(".board");
+    const gameStatusMsg = document.querySelector(".game-status");
 
     const updateScreen = () => {
         boardDiv.textContent = "";
+        gameStatusMsg.textContent = "";
 
         const board = gameboard.getBoard();
         board.forEach(row => {
@@ -161,6 +168,18 @@ const screenController = (function () {
                 boardDiv.appendChild(cellButton);
             });
         });
+
+        gameStatusMsg.textContent = `${gameController.getActivePlayer().getPlayerName()} (${gameController.getActivePlayer().getPlayerToken()}) Turn!`;
+    }
+
+    const displayWinner = (player) => {
+        gameStatusMsg.textContent = "";
+        gameStatusMsg.textContent = `Game Over! ${player.getPlayerName()} (${player.getPlayerToken()}) Wins!!`;
+    }
+
+    const displayTie = () => {
+        gameStatusMsg.textContent = "";
+        gameStatusMsg.textContent = "Game Over! It's a Tie!!"
     }
     
     const clickHandlerBoard = (event) => {
@@ -170,7 +189,8 @@ const screenController = (function () {
         if(!selectedRow) return;
 
         gameController.playRound(gameboard.getBoard()[selectedRow][selectedCol]);
-        updateScreen();
+        
+        // updateScreen();
     }
     boardDiv.addEventListener("click", clickHandlerBoard);
 
@@ -178,7 +198,7 @@ const screenController = (function () {
 
     //Dont need this once ui ver done?
     return {
-        updateScreen,
+        updateScreen, displayWinner, displayTie,
     }
 })();
 
