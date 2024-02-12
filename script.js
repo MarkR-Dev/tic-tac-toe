@@ -77,6 +77,7 @@ const gameController = (function(){
     const player1 = createPlayer("Player 1", "X");
     const player2 = createPlayer("Player 2", "O");
     const playersArray = [player1, player2];
+    let isGameOver = false;
     
     let activePlayer = playersArray[0];
 
@@ -90,7 +91,7 @@ const gameController = (function(){
     }
 
     const playRound = (cell) => {
-        if(gameboard.isCellTaken(cell)){
+        if(gameboard.isCellTaken(cell) || isGameOver){
            return 
         }
 
@@ -100,10 +101,12 @@ const gameController = (function(){
         if(isWinner()){
             gameboard.printBoard();
             console.log(`Game over, ${getActivePlayer().getPlayerName()} Wins!`);
+            isGameOver = true;
             return
         }else if(isTie()){
             gameboard.printBoard();
             console.log("TIE");
+            isGameOver = true;
             return
         }
         
@@ -116,7 +119,7 @@ const gameController = (function(){
         return winningCombos.some(combo => {
             return combo.every(cellValue => {
                return gameboard.getBoard()[cellValue[0]][cellValue[1]].getValue() === getActivePlayer().getPlayerToken(); 
-            })
+            });
         });
     }
 
@@ -156,16 +159,28 @@ const screenController = (function () {
                 }
 
                 boardDiv.appendChild(cellButton);
-            })
-        })
+            });
+        });
     }
+    
+    const clickHandlerBoard = (event) => {
+        const selectedRow = event.target.dataset.row;
+        const selectedCol = event.target.dataset.col;
+
+        if(!selectedRow) return;
+
+        gameController.playRound(gameboard.getBoard()[selectedRow][selectedCol]);
+        updateScreen();
+    }
+    boardDiv.addEventListener("click", clickHandlerBoard);
 
     updateScreen();
 
+    //Dont need this once ui ver done?
     return {
         updateScreen,
     }
 })();
-//TODO - add board listener, click to play feature
+
 
 
