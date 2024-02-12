@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 body {
-    background-color: darkslateblue;
+    background-color: #483d8b;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: Roboto, monospace;
 }
 
 .board {
@@ -17,16 +20,25 @@ body {
 .cell {
     background-color: transparent;
     border: none;
+    font-size: 5rem;
+    font-weight: 700;
 }
 
 [data-row="0"],
 [data-row="1"] {
-    border-bottom: 3px solid white;
+    border-bottom: 5px solid white;
 }
 
 [data-col="0"],
 [data-col="1"]{
-    border-right: 3px solid white;
+    border-right: 5px solid white;
 }
 
+.cross {
+    color: #5acf6a;
+}
+
+.nought {
+    color: #df6553;
+}
 

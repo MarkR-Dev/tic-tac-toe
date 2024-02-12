@@ -2,7 +2,7 @@ const gameboard = (function() {
     const board = [];
 
     // Loops to populate 2D array of cells representing rows/cols,
-    // each cell has a property holding its row/col position
+    // each cell has a property holding its row(i)/col(j) position
     for(let i = 0; i < 3; i++){
         board[i] = [];
         for(let j = 0; j < 3; j++){
@@ -147,6 +147,14 @@ const screenController = (function () {
                 cellButton.setAttribute("data-col", col);
                 cellButton.textContent = cell.getValue();
 
+                if(cellButton.textContent === "0"){
+                    cellButton.textContent = "";
+                }else if(cellButton.textContent === "X"){
+                    cellButton.classList.add("cross");
+                }else if(cellButton.textContent === "O"){
+                    cellButton.classList.add("nought");
+                }
+
                 boardDiv.appendChild(cellButton);
             })
         })
@@ -158,5 +166,6 @@ const screenController = (function () {
         updateScreen,
     }
 })();
+//TODO - add board listener, click to play feature
 
 
