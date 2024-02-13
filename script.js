@@ -33,6 +33,8 @@ function createCell(row, col){
     // Closures retain access to the value variable of each cell object created
     const getValue = () => value;
 
+    const resetValue = () => value = 0;
+
     const getPosition = () => {
         return {row, col};
     }
@@ -40,7 +42,7 @@ function createCell(row, col){
     const addToken = player => value = player.getPlayerToken();
 
     return {
-        getValue, addToken, getPosition,
+        getValue, resetValue, getPosition, addToken, 
     }
 }
 
@@ -113,14 +115,23 @@ const gameController = (function(){
 
     const isTie = () => gameboard.isBoardFull();
 
+    const resetGame = () => {
+        activePlayer = playersArray[0];
+        isGameOver = false;
+        const board = gameboard.getBoard();
+        board.forEach(row => row.forEach(cell => cell.resetValue()));
+    }
+
     return {
-        getActivePlayer, playRound,
+        getActivePlayer, playRound, resetGame,
     }
 })();
 
 const screenController = (function () {
-    const boardDiv = document.querySelector(".board");
+    const resetButton = document.querySelector(".reset");
     const gameStatusMsg = document.querySelector(".game-status");
+    const boardDiv = document.querySelector(".board");
+    
 
     const updateScreen = () => {
         boardDiv.textContent = "";
@@ -160,7 +171,7 @@ const screenController = (function () {
 
     const displayTie = () => {
         gameStatusMsg.textContent = "";
-        gameStatusMsg.textContent = "Game Over! It's a Tie!!"
+        gameStatusMsg.textContent = "Game Over! It's a Tie!!";
     }
     
     const clickHandlerBoard = (event) => {
@@ -171,7 +182,13 @@ const screenController = (function () {
 
         gameController.playRound(gameboard.getBoard()[selectedRow][selectedCol]);
     }
-    
+
+    const resetGameHandler = () => {
+        gameController.resetGame();
+        updateScreen();
+    }
+
+    resetButton.addEventListener("click", resetGameHandler);
     boardDiv.addEventListener("click", clickHandlerBoard);
 
     updateScreen();
