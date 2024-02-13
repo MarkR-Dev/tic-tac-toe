@@ -12,12 +12,6 @@ const gameboard = (function() {
 
     const getBoard = () => board;
 
-    // Look into each row, look into each cell in that row, and get the value of that cell
-    const printBoard = () => {
-        const boardCellValues = board.map(row => row.map(cell => cell.getValue()));
-        console.log(boardCellValues);
-    }
-
     const isBoardFull = () => {
         // Check if the board is full by searching for an empty cell
         const isBoardFull = !board.some(row => row.some(cell => cell.getValue() === 0));
@@ -29,7 +23,7 @@ const gameboard = (function() {
     const placeToken = (cell, player) => cell.addToken(player);
     
     return {
-        getBoard, printBoard, isBoardFull, isCellTaken, placeToken,
+        getBoard, isBoardFull, isCellTaken, placeToken,
     }
 })();
 
@@ -85,29 +79,19 @@ const gameController = (function(){
 
     const switchPlayerTurn = () => activePlayer = activePlayer === playersArray[0] ? playersArray[1] : playersArray[0];
         
-    const printNewRound = () => {
-        gameboard.printBoard();
-        console.log(`${getActivePlayer().getPlayerName()}'s Turn!`);
-    }
-
     const playRound = (cell) => {
         if(gameboard.isCellTaken(cell) || isGameOver){
            return 
         }
 
-        console.log(`Setting token ${getActivePlayer().getPlayerToken()}`);
         gameboard.placeToken(cell, getActivePlayer());
 
         if(isWinner()){
-            gameboard.printBoard();
-            console.log(`Game over, ${getActivePlayer().getPlayerName()} Wins!`);
             isGameOver = true;
             screenController.updateScreen();
             screenController.displayWinner(getActivePlayer())
             return
         }else if(isTie()){
-            gameboard.printBoard();
-            console.log("TIE");
             isGameOver = true;
             screenController.updateScreen();
             screenController.displayTie();
@@ -115,7 +99,6 @@ const gameController = (function(){
         }
         
         switchPlayerTurn();
-        printNewRound();
         screenController.updateScreen();
     }
 
@@ -129,8 +112,6 @@ const gameController = (function(){
     }
 
     const isTie = () => gameboard.isBoardFull();
-
-    printNewRound()
 
     return {
         getActivePlayer, playRound,
@@ -189,14 +170,12 @@ const screenController = (function () {
         if(!selectedRow) return;
 
         gameController.playRound(gameboard.getBoard()[selectedRow][selectedCol]);
-        
-        // updateScreen();
     }
+    
     boardDiv.addEventListener("click", clickHandlerBoard);
 
     updateScreen();
 
-    //Dont need this once ui ver done?
     return {
         updateScreen, displayWinner, displayTie,
     }
