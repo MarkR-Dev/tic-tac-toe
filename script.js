@@ -2,11 +2,11 @@ const gameboard = (function() {
     const board = [];
 
     // Loops to populate 2D array of cells representing rows/cols,
-    // each cell has a property holding its row(i)/col(j) position
-    for(let i = 0; i < 3; i++){
-        board[i] = [];
-        for(let j = 0; j < 3; j++){
-            board[i].push(createCell(i, j));
+    // each cell has a property holding its row/col position
+    for(let row = 0; row < 3; row++){
+        board[row] = [];
+        for(let col = 0; col < 3; col++){
+            board[row].push(createCell(row, col));
         }
     }
 
@@ -101,11 +101,11 @@ const gameController = (function(){
         screenController.updateScreen();
     }
 
-    // Look through the winning combos and see if any match the active players token
+    // Look through the winning combos and find any where all cells match the active players token
     const isWinner = () => {
         return winningCombos.some(combo => {
-            return combo.every(cellValue => {
-               return gameboard.getBoard()[cellValue[0]][cellValue[1]].getValue() === getActivePlayer().getPlayerToken(); 
+            return combo.every(cellPosition => {
+               return gameboard.getBoard()[cellPosition[0]][cellPosition[1]].getValue() === getActivePlayer().getPlayerToken(); 
             });
         });
     }
@@ -200,8 +200,7 @@ const screenController = (function () {
         gameController.resetGame();
         updateGrid();
         gameStatusMsg.textContent = "Enter Player Names!";
-        //might need to change this once styling
-        playerNameInputs.forEach(input => input.style.display = "block");
+        playerNameInputs.forEach(input => input.style.visibility = "visible");
         startButton.addEventListener("click", startGameHandler);
         resetButton.removeEventListener("click", resetGameHandler);
       }
@@ -211,7 +210,7 @@ const screenController = (function () {
         const playerOneName = playerNameInputs[0].value;
         const playerTwoName = playerNameInputs[1].value;
         playerNameInputs.forEach(input => {
-            input.style.display = "none";
+            input.style.visibility = "hidden";
             input.value = "";
         });
         gameController.startGame(playerOneName, playerTwoName);
